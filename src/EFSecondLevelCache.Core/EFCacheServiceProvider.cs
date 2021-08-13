@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using CacheManager.Core;
@@ -13,11 +13,12 @@ namespace EFSecondLevelCache.Core
     {
         private static readonly EFCacheKey _nullObject = new EFCacheKey();
 
+        //TODO: Accessing services for cache statically.. accessing them via DI causes unsuspected and unpredictable behavior. 
         private static readonly ICacheManager<ISet<string>> _dependenciesCacheManager =
-            EFStaticServiceProvider.Instance.GetRequiredService<ICacheManager<ISet<string>>>();
+            EFStaticServiceProviderAccessor.ServiceProvider.GetRequiredService<ICacheManager<ISet<string>>>();
 
         private static readonly ICacheManager<object> _valuesCacheManager =
-            EFStaticServiceProvider.Instance.GetRequiredService<ICacheManager<object>>();
+            EFStaticServiceProviderAccessor.ServiceProvider.GetRequiredService<ICacheManager<object>>();
 
         private static readonly ReaderWriterLockSlim _vcmReaderWriterLock = new ReaderWriterLockSlim();
         private static readonly ReaderWriterLockSlim _dcReaderWriterLock = new ReaderWriterLockSlim();

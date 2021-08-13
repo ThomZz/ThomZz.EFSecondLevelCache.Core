@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using CacheManager.Core;
 using EFSecondLevelCache.Core.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,10 +11,11 @@ namespace EFSecondLevelCache.Core
     /// </summary>
     public static class EFServiceCollectionExtensions
     {
+
         /// <summary>
-        /// A collection of service descriptors.
+        /// Indicates whether or not if the EFSecondLevelCache required services has been added successfully.
         /// </summary>
-        public static IServiceCollection ServiceCollection { get; set; }
+        public static bool Added { get; private set; } = false;
 
         /// <summary>
         /// Registers the required services of the EFSecondLevelCache.Core.
@@ -23,7 +26,8 @@ namespace EFSecondLevelCache.Core
             services.AddSingleton<IEFCacheKeyProvider, EFCacheKeyProvider>();
             services.AddSingleton<IEFCacheServiceProvider, EFCacheServiceProvider>();
 
-            ServiceCollection = services;
+            Added = true;
+
             return services;
         }
     }

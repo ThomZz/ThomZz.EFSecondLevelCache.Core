@@ -1,35 +1,34 @@
-# [Announcing a better Second Level Caching Library!](https://github.com/VahidN/EFSecondLevelCache.Core/issues/67)
 
-# EFSecondLevelCache.Core
 
-<p align="left">
-  <a href="https://github.com/VahidN/EFSecondLevelCache.Core">
-     <img alt="GitHub Actions status" src="https://github.com/VahidN/EFSecondLevelCache.Core/workflows/.NET%20Core%20Build/badge.svg">
-  </a>
-</p>
+# ThomZz.EFSecondLevelCache.Core
 
-Entity Framework Core Second Level Caching Library.
+Entity Framework Core 5 Second Level Caching Library.
 
 Second level caching is a query cache. The results of EF commands will be stored in the cache, so that the same EF commands will retrieve their data from the cache rather than executing them against the database again.
+
+##  Little bit of context 
+Directly forked from https://github.com/VahidN/EFSecondLevelCache.Core (Thanks!), i've modified it to support EFCore 5 (Still maybe have some serious work to do ...). Being well aware of the new version with interceptors (https://github.com/VahidN/EFCoreSecondLevelCacheInterceptor), that version didn't fit my need as i wanted to retrieve objects in the cache handles, and not DbReaders. It allows me to apply some specific predicates against cache entries, like the cached object type, or other more sophisticated conditions.
+
+Supports for netstandard2.0 and .net456 has been dropped. Now Only supporting dotnetcore3.1.
 
 ## Install via NuGet
 
 To install EFSecondLevelCache.Core, run the following command in the Package Manager Console:
 
-[![Nuget](https://img.shields.io/nuget/v/EFSecondLevelCache.Core)](https://github.com/VahidN/EFSecondLevelCache.Core)
+[![Nuget](https://img.shields.io/nuget/v/ThomZz.EFSecondLevelCache.Core)](https://github.com/ThomZz/ThomZz.EFSecondLevelCache.Core)
 
 ```
-PM> Install-Package EFSecondLevelCache.Core
+PM> Install-Package ThomZz.EFSecondLevelCache.Core
 ```
 
-You can also view the [package page](http://www.nuget.org/packages/EFSecondLevelCache.Core/) on NuGet.
+You can also view the [package page](http://www.nuget.org/packages/ThomZz.EFSecondLevelCache.Core/) on NuGet.
 
 This library also uses the [CacheManager.Core](https://github.com/MichaCo/CacheManager), as a highly configurable cache manager.
 To use its in-memory caching mechanism, add these entries to the `.csproj` file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="EFSecondLevelCache.Core" Version="2.9.0" />
+    <PackageReference Include="ThomZz.EFSecondLevelCache.Core" Version="1.0.0" />
     <PackageReference Include="CacheManager.Core" Version="1.2.0" />
     <PackageReference Include="CacheManager.Microsoft.Extensions.Caching.Memory" Version="1.2.0" />
     <PackageReference Include="CacheManager.Serialization.Json" Version="1.2.0" />
@@ -44,7 +43,7 @@ PM> Update-Package
 
 ## Usage
 
-1- [Register the required services](/src/Tests/EFSecondLevelCache.Core.AspNetCoreSample/Startup.cs) of `EFSecondLevelCache.Core` and also `CacheManager.Core`
+1- [Register the required services](/src/Tests/EFSecondLevelCache.Core.AspNetCoreSample/Startup.cs) of `ThomZz.EFSecondLevelCache.Core` and also `CacheManager.Core`
 
 ```csharp
 namespace EFSecondLevelCache.Core.AspNetCoreSample
@@ -100,6 +99,18 @@ services.AddSingleton(typeof(ICacheManagerConfiguration),
         .Build());
 services.AddSingleton(typeof(ICacheManager<>), typeof(BaseCacheManager<>));
 ```
+
+You'll also need to configure the EFSecondLevelCache on your IApplicationBuilder :
+
+```csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+{
+    //...
+    app.ConfigureEFSecondLevelCache()
+    //...
+}
+```
+
 
 2- [Setting up the cache invalidation](/src/Tests/EFSecondLevelCache.Core.AspNetCoreSample/DataLayer/SampleContext.cs) by overriding the SaveChanges method to prevent stale reads:
 

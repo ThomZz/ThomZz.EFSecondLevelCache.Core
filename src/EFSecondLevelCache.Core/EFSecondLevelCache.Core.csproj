@@ -1,37 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Entity Framework Core Second Level Caching Library.</Description>
+    <Description>Entity Framework Core Second Level Caching Library, from the work of Vahid Nasiri</Description>
     <VersionPrefix>2.9.1</VersionPrefix>
-    <Authors>Vahid Nasiri</Authors>
-    <TargetFrameworks>netstandard2.0;net461;</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.0</TargetFrameworks>
+    <Authors>Thomas-Louis Simard (Vahid Nasiri)</Authors>
+    <TargetFrameworks>netstandard2.1;</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>EFSecondLevelCache.Core</AssemblyName>
-    <PackageId>EFSecondLevelCache.Core</PackageId>
+    <PackageId>ThomZz.EFSecondLevelCache.Core</PackageId>
     <PackageTags>EntityFramework;Cache;Caching;SecondLevelCache;EFCore;ORM;.NET Core;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/VahidN/EFSecondLevelCache.Core</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/ThomZz/EFSecondLevelCache.Core</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>1.0.0</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
+  <ItemGroup>
     <PackageReference Include="CacheManager.Core" Version="1.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
   </ItemGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-    <DefineConstants>NET4_6_1</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="CacheManager.Core" Version="1.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
-  </ItemGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>anycpu</PlatformTarget>

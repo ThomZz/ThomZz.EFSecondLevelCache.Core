@@ -16,9 +16,9 @@ namespace EFSecondLevelCache.Core
 
         static EFCachedQueryExtensions()
         {
-            var serviceProvider = EFStaticServiceProvider.Instance;
-            _defaultCacheServiceProvider = serviceProvider.GetRequiredService<IEFCacheServiceProvider>();
-            _defaultCacheKeyProvider = serviceProvider.GetRequiredService<IEFCacheKeyProvider>();
+            using var scope = EFStaticServiceProviderAccessor.GetScope();
+            _defaultCacheServiceProvider = scope.ServiceProvider.GetRequiredService<IEFCacheServiceProvider>();
+            _defaultCacheKeyProvider = scope.ServiceProvider.GetRequiredService<IEFCacheKeyProvider>();
         }
 
         /// <summary>

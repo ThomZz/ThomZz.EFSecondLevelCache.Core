@@ -8,6 +8,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using EFSecondLevelCache.Core.Contracts;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace EFSecondLevelCache.Core
 {
@@ -375,6 +378,12 @@ namespace EFSecondLevelCache.Core
         /// <returns></returns>
         protected override Expression VisitExtension(Expression node)
         {
+            //TEMP: Patch to ensures compatibility with EFCore 5.X...
+            if (node is QueryRootExpression queryRootExpr)
+            {
+                return VisitConstant(Expression.Constant(queryRootExpr.QueryProvider.CreateQuery(queryRootExpr)));
+            }
+
             Out(string.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType()));
 
             if (node.CanReduce)

@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using EFSecondLevelCache.Core.Contracts;
 using System;
 using CacheManager.Core;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -30,18 +29,18 @@ namespace EFSecondLevelCache.Core
 
         private static readonly TimeSpan _slidingExpirationTimeSpan = TimeSpan.FromMinutes(7);
 
-        private static readonly ICacheManager<EFCacheKey> _keysCacheManager =
-            EFStaticServiceProvider.Instance.GetRequiredService<ICacheManager<EFCacheKey>>();
-
+        private readonly ICacheManager<EFCacheKey> _keysCacheManager;
         private readonly IEFCacheKeyHashProvider _cacheKeyHashProvider;
 
         /// <summary>
         /// A custom cache key provider for EF queries.
         /// </summary>
         /// <param name="cacheKeyHashProvider">Provides the custom hashing algorithm.</param>
-        public EFCacheKeyProvider(IEFCacheKeyHashProvider cacheKeyHashProvider)
+        /// <param name="keysCacheManager">Provides the EFCacheKey cache manager.</param>
+        public EFCacheKeyProvider(IEFCacheKeyHashProvider cacheKeyHashProvider, ICacheManager<EFCacheKey> keysCacheManager)
         {
             _cacheKeyHashProvider = cacheKeyHashProvider;
+            _keysCacheManager = keysCacheManager;
         }
 
         /// <summary>
@@ -54,7 +53,7 @@ namespace EFSecondLevelCache.Core
         public EFCacheKey GetEFCacheKey(IQueryable query, Expression expression, string saltKey = "")
         {
             var queryCompiler = (QueryCompiler)_queryCompilerField.GetValue(query.Provider);
-            var (expressionKeyHash, modifiedExpression) = getExpressionKeyHash(queryCompiler, _cacheKeyHashProvider, expression);
+            var (expressionKeyHash, modifiedExpression) = GetExpressionKeyHash(queryCompiler, _cacheKeyHashProvider, expression);
             var cachedKey = _keysCacheManager.Get<EFCacheKey>(expressionKeyHash);
             if (cachedKey != null)
             {
@@ -74,17 +73,17 @@ namespace EFSecondLevelCache.Core
                 KeyHash = keyHash,
                 CacheDependencies = expressionVisitorResult.Types
             };
-            setCache(expressionKeyHash, cacheKey);
+            SetCache(expressionKeyHash, cacheKey);
             return cacheKey;
         }
 
-        private static void setCache(string expressionKeyHash, EFCacheKey value)
+        private void SetCache(string expressionKeyHash, EFCacheKey value)
         {
             _keysCacheManager.Add(
                 new CacheItem<EFCacheKey>(expressionKeyHash, value, ExpirationMode.Sliding, _slidingExpirationTimeSpan));
         }
 
-        private static (string ExpressionKeyHash, Expression ModifiedExpression) getExpressionKeyHash(
+        private (string ExpressionKeyHash, Expression ModifiedExpression) GetExpressionKeyHash(
             QueryCompiler queryCompiler,
             IEFCacheKeyHashProvider cacheKeyHashProvider,
             Expression expression)

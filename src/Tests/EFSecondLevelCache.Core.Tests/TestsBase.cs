@@ -8,6 +8,7 @@ using EFSecondLevelCache.Core.AspNetCoreSample.DataLayer;
 using EFSecondLevelCache.Core.AspNetCoreSample.DataLayer.Utils;
 using EFSecondLevelCache.Core.AspNetCoreSample.Profiles;
 using EFSecondLevelCache.Core.Contracts;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,23 +23,31 @@ namespace EFSecondLevelCache.Core.Tests
         public static IEFCacheServiceProvider GetInMemoryCacheServiceProvider()
         {
             var services = new ServiceCollection();
+            
             services.AddEFSecondLevelCache();
-
             addInMemoryCacheServiceProvider(services);
 
             var serviceProvider = services.BuildServiceProvider();
-            return serviceProvider.GetRequiredService<IEFCacheServiceProvider>();
+            var appBuilder = new ApplicationBuilder(serviceProvider);
+
+            appBuilder.ConfigureEFSecondLevelCache();
+
+            return appBuilder.ApplicationServices.GetRequiredService<IEFCacheServiceProvider>();
         }
 
         public static IEFCacheServiceProvider GetRedisCacheServiceProvider()
         {
             var services = new ServiceCollection();
-            services.AddEFSecondLevelCache();
 
+            services.AddEFSecondLevelCache();
             addRedisCacheServiceProvider(services);
 
             var serviceProvider = services.BuildServiceProvider();
-            return serviceProvider.GetRequiredService<IEFCacheServiceProvider>();
+            var appBuilder = new ApplicationBuilder(serviceProvider);
+
+            appBuilder.ConfigureEFSecondLevelCache();
+
+            return appBuilder.ApplicationServices.GetRequiredService<IEFCacheServiceProvider>();
         }
 
         public static IServiceProvider GetServiceProvider()
@@ -63,15 +72,18 @@ namespace EFSecondLevelCache.Core.Tests
             services.AddAutoMapper(typeof(PostProfile).GetTypeInfo().Assembly);
 
             services.AddEFSecondLevelCache();
-
             addInMemoryCacheServiceProvider(services);
-            //addRedisCacheServiceProvider(services);
 
             var serviceProvider = services.BuildServiceProvider();
-            var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>();
-            serviceScope.SeedData();
+            var appBuilder = new ApplicationBuilder(serviceProvider);
 
-            return serviceProvider;
+            appBuilder.ConfigureEFSecondLevelCache();
+
+            //addRedisCacheServiceProvider(services);
+            var serviceScopeFactory = appBuilder.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+            serviceScopeFactory.SeedData();
+
+            return appBuilder.ApplicationServices;
         }
 
         public static void ExecuteInParallel(Action test, int count = 40)
