@@ -2,14 +2,14 @@
 
 # ThomZz.EFSecondLevelCache.Core
 
-Entity Framework Core 5 Second Level Caching Library.
+Entity Framework Core Second Level Caching Library.
 
 Second level caching is a query cache. The results of EF commands will be stored in the cache, so that the same EF commands will retrieve their data from the cache rather than executing them against the database again.
 
-##  Little bit of context 
-Directly forked from https://github.com/VahidN/EFSecondLevelCache.Core (Thanks!), i've modified it to support EFCore 5 (Still maybe have some serious work to do ...). Being well aware of the new version with interceptors (https://github.com/VahidN/EFCoreSecondLevelCacheInterceptor), that version didn't fit my need as i wanted to retrieve objects in the cache handles, and not DbReaders. It allows me to apply some specific predicates against cache entries, like the cached object type, or other more sophisticated conditions.
+##  Little bit of context
+Directly forked from https://github.com/VahidN/EFSecondLevelCache.Core (Thanks!), i've modified it to support Entity Framework Core 5 and up (Still maybe have some serious work to do, but working pretty well ...). Being well aware of the new version with interceptors (https://github.com/VahidN/EFCoreSecondLevelCacheInterceptor), that version didn't fit my need as i wanted to retrieve plain objects in the cache handles, and not DbReaders. It allows me to apply some specific predicates against cache entries, like the cached object type, or other more sophisticated conditions.
 
-Supports for netstandard2.0 and .net456 has been dropped. Now Only supporting dotnetcore3.1.
+Supports for netstandard2.0 and .net456 has been dropped. Now only supports net6.0.
 
 ## Install via NuGet
 
@@ -28,7 +28,7 @@ To use its in-memory caching mechanism, add these entries to the `.csproj` file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="ThomZz.EFSecondLevelCache.Core" Version="1.0.0" />
+    <PackageReference Include="ThomZz.EFSecondLevelCache.Core" Version="2.0.0" />
     <PackageReference Include="CacheManager.Core" Version="1.2.0" />
     <PackageReference Include="CacheManager.Microsoft.Extensions.Caching.Memory" Version="1.2.0" />
     <PackageReference Include="CacheManager.Serialization.Json" Version="1.2.0" />

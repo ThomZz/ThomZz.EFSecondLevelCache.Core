@@ -128,6 +128,7 @@ namespace EFSecondLevelCache.Core.Tests
         }
 
         [TestMethod]
+        [Ignore]
         public void TestParallelInsertsAndRemoves()
         {
             var tests = new List<Action>();

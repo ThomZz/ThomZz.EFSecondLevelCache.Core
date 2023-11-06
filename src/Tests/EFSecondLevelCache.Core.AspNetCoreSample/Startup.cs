@@ -33,6 +33,7 @@ namespace EFSecondLevelCache.Core.AspNetCoreSample
             IServiceScopeFactory scopeFactory)
         {
             //app.UseBlockingDetection();
+            app.ConfigureEFSecondLevelCache();
 
             scopeFactory.Initialize();
             scopeFactory.SeedData();
@@ -58,8 +59,8 @@ namespace EFSecondLevelCache.Core.AspNetCoreSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEFSecondLevelCache();
-            // addInMemoryCacheServiceProvider(services);
-            addRedisCacheServiceProvider(services);
+            addInMemoryCacheServiceProvider(services);
+            //addRedisCacheServiceProvider(services);
 
             services.AddDbContext<SampleContext>(optionsBuilder =>
             {
